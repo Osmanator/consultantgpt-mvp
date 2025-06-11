@@ -48,7 +48,7 @@ if st.button("Analysieren") and nutzer_input:
 
     with st.spinner("ConsultantGPT denkt nach ..."):
         response = client.chat.completions.create(
-            model="gpt-4-turbo",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "Du bist ein professioneller Business Consultant."},
                 {"role": "user", "content": prompt}

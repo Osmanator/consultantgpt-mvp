@@ -47,15 +47,17 @@ if st.button("Analysieren") and nutzer_input:
         """
 
     with st.spinner("ConsultantGPT denkt nach ..."):
-        response = openai.ChatCompletion.create(
-            model="gpt-4-turbo",
-            messages=[
-                {"role": "system", "content": "Du bist ein professioneller Business Consultant."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7
-        )
-        antwort = response["choices"][0]["message"]["content"]
+       client = openai.OpenAI(api_key=oapi_key)
+
+response = client.chat.completions.create(
+    model="gpt-4-turbo",
+    messages=[
+        {"role": "system", "content": "..."},
+        {"role": "user", "content": "..."}
+    ],
+    temperature=0.7
+)
+antwort = response.choices[0].message.content
         st.subheader("Dein Ergebnis:")
         st.markdown(antwort)
 

@@ -1,5 +1,6 @@
 import streamlit as st
 import openai
+import textwrap
 
 # Seiten-Setup
 st.set_page_config(page_title="ConsultantGPT", layout="centered")
@@ -16,20 +17,48 @@ client = openai.OpenAI(api_key=oapi_key)
 
 # Auswahlmodul
 modul = st.selectbox("Welches Tool möchtest du nutzen?", ["SWOT-Analyse", "Business Model Canvas"])
-
 nutzer_input = st.text_area("Beschreibe dein Thema, Projekt oder Unternehmen:")
 
 if st.button("Analysieren") and nutzer_input:
     if modul == "SWOT-Analyse":
-        prompt = f"""
-        Du bist ein Unternehmensberater. Führe eine SWOT-Analyse durch (Stärken, Schwächen, Chancen, Risiken) für folgendes Thema:
+        prompt = textwrap.dedent(f"""
+            Du bist ein Unternehmensberater. Führe eine SWOT-Analyse durch (Stärken, Schwächen, Chancen, Risiken) für folgendes Thema:
 
-        {nutzer_input}
+            {nutzer_input}
 
-        Gib die Antwort bitte als klare Liste aus.
-        """
+            Gib die Antwort bitte als klare Liste aus.
+        """)
     elif modul == "Business Model Canvas":
-        prompt = f"""
-        Du bist ein Unternehmensberater. Erstelle ein vollständiges Business Model Canvas (BMC) für folgendes Thema:
+        prompt = textwrap.dedent(f"""
+            Du bist ein Unternehmensberater. Erstelle ein vollständiges Business Model Canvas (BMC) für folgendes Thema:
 
-        {nutzer_in_
+            {nutzer_input}
+
+            Gib die Antwort bitte mit den klassischen BMC-Elementen aus:
+            - Kundensegmente
+            - Wertangebote
+            - Kanäle
+            - Kundenbeziehungen
+            - Einnahmequellen
+            - Schlüsselressourcen
+            - Schlüsselaktivitäten
+            - Schlüsselpartnerschaften
+            - Kostenstruktur
+        """)
+
+    with st.spinner("ConsultantGPT denkt nach ..."):
+        response = client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=[
+                {"role": "system", "content": "Du bist ein professioneller Business Consultant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7
+        )
+        antwort = response.choices[0].message.content
+
+    st.subheader("Dein Ergebnis:")
+    st.markdown(antwort)
+
+st.markdown("---")
+st.caption("ConsultantGPT MVP | Erstellt von Osman Sahbaz")
